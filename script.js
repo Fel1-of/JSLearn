@@ -4,15 +4,7 @@ let money = +prompt("Ваш месячный доход?"); //Доход за м
 
 let income = "Фриланс";
 
-let addExpenses = prompt("Перечислите возможные расходы за рассчитываемый период через запятую");
-
-let deposit = prompt("Есть ли у вас депозит в банке?");
-if (deposit === "Да" || deposit === "Есть" || deposit === "ДА" || deposit === "да"){
-    deposit = true;
-}
-else{
-    deposit = false;
-}
+let addExpenses = confirm("Перечислите возможные расходы за рассчитываемый период через запятую");
 
 let expenses1 = prompt("Введите обязательную статью расходов?");
 let amount1 = prompt("Во сколько это обойдется?");
