@@ -35,6 +35,10 @@ function getTargetMonth(mission, budget){
 
 let budgetDay = Math.floor(accumulatedMonth/30);
 
+const showTypeOf = function(a) {
+    console.log(typeof(a));
+};
+
 const getStatusIncome = function (budgetDay) {
     if (budgetDay >= 1200) {
     console.log("У вас высокий уровень дохода");
@@ -47,9 +51,7 @@ const getStatusIncome = function (budgetDay) {
     }
 };
 
-console.log(typeof(money));
-console.log(typeof(income));
-console.log(typeof(deposit));
+showTypeOf(money);
 console.log(addExpenses.toLocaleLowerCase().split(", "));
 console.log(getExpensesMonth(amount1, amount2));
 console.log(`Цель будет достигнута за ${getTargetMonth(mission, accumulatedMonth)} месяцев(-а)`);
