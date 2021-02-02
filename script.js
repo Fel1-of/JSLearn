@@ -52,6 +52,8 @@ const getStatusIncome = function (budgetDay) {
 };
 
 showTypeOf(money);
+showTypeOf(deposit);
+showTypeOf(income);
 console.log(addExpenses.toLocaleLowerCase().split(", "));
 console.log(getExpensesMonth(amount1, amount2));
 console.log(`Цель будет достигнута за ${getTargetMonth(mission, accumulatedMonth)} месяцев(-а)`);
