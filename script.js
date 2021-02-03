@@ -30,23 +30,23 @@ function getExpensesMonth() {
     
     for (let i = 0; i < 2; i++) {
         expenses.push(prompt('Введите обязательную статью расхода:'));
-        let Amount = prompt('Во сколько это обойдется?');
+        let amount = prompt('Во сколько это обойдется?');
 
-        while(!isNumber(Amount)){
+        while(!isNumber(amount)){
             alert('Данные не являются числом. Выполните кооректный ввод!');
-            Amount = prompt('Во сколько это обойдется?');
+            amount = prompt('Во сколько это обойдется?');
         }
 
         
-        sum += Number(Amount);
+        sum += Number(amount);
         
     }
 
     return sum;
 };
 
-function getAccumulatedMonth(a,b){
-    return a-b;
+function getAccumulatedMonth(budget,expenses){
+    return budget-expenses;
 }
 
 let expensesAmount = getExpensesMonth();
