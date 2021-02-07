@@ -1,6 +1,6 @@
 'use strict';
 function generateOddNumber(x, y){
-    let rand = Math.min(x, y) + Math.floor(Math.random() * (Math.max(x, y) + 1 - Math.min(x, y)));
+    let rand = Math.floor(Math.min(x, y) + Math.random() * (Math.max(x, y) + 1 - Math.min(x, y)));
     console.log(rand);
 }
 
