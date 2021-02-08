@@ -8,7 +8,7 @@ function isNumber(num) {
 function start() {
     do {
         money = prompt("Ваш месячный доход?");
-    } while (!isNumber(money));
+    } while (!isNumber(money) || !money.trim());
 }
 
 start();
@@ -32,33 +32,36 @@ let appData = {
         if (confirm("Есть ли у вас дополнительный заработок?")) {
             let itemIncome;
             do {
-                itemIncome = prompt("Какой у вас дополнительнтй заработок?");
-            } while (isNumber(itemIncome));
+                itemIncome = prompt("Какой у вас дополнительный заработок?");
+            } while (isNumber(itemIncome) || !itemIncome.trim());
 
             let cashIncome;
             do {
                 cashIncome = prompt("Сколько в месяц зарбатываете на этом?");
-            } while (!isNumber(cashIncome));
+            } while (!isNumber(cashIncome) || !cashIncome.trim());
             
             this.income[itemIncome] = cashIncome;
         }
 
-        let addExpenses = prompt("Перечислите возможные расходы за рассчитываемый период через запятую с пробелом");
-        this.addExpenses = addExpenses.split(', ');
+        let addExpenses;
+        do {
+            addExpenses = prompt("Перечислите возможные расходы за рассчитываемый период через запятую с пробелом").toLowerCase().replace(/\s+/g, ' ').trim();
+        } while (isNumber(addExpenses) || !addExpenses.trim());
+        
+        this.addExpenses = addExpenses.split(',');
         this.deposit = confirm("Есть ли у вас депозит в банке?");
 
         for (let i = 0; i < 2; i++) {
             let answer;
             do {
                 answer = prompt('Введите обязательную статью расхода:');
-            } while (isNumber(answer));
+            } while (isNumber(answer) || !answer.trim());
 
-            let amount = prompt('Во сколько это обойдется?');
-            if (isNumber(amount)) {
-                this.expenses[`"${answer}"`] = +amount;
-            } else {
-                alert("Введите число!");
-            }
+            let amount;
+            do {
+                amount = prompt('Во сколько это обойдется?');
+            } while(!isNumber(amount) || !amount.trim());
+            this.expenses[`${amount}`] = +amount;
         }
     },
 
@@ -95,11 +98,11 @@ let appData = {
         if (this.deposit) {
             do {
                 this.percentDeposit = prompt("Какой у вас годовой процент?");
-            } while (!isNumber(this.percentDeposit));
+            } while (!isNumber(this.percentDeposit) || !this.percentDeposit.trim());
 
             do {
                 this.moneyDeposit = prompt("Какая сумма заложена?");
-            } while (!isNumber(this.moneyDeposit));
+            } while (!isNumber(this.moneyDeposit) || !this.moneyDeposit.trim());
         }
     },
 
@@ -129,5 +132,4 @@ let arr = [];
 for (let i = 0; i < appData.addExpenses.length; i++) {
     arr.push(`${appData.addExpenses[i].trim().slice(0, 1).toUpperCase() + appData.addExpenses[i].trim().slice(1)}`);
 }
-
 console.log(arr.join(', '));
