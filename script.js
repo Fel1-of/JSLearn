@@ -133,3 +133,28 @@ for (let i = 0; i < appData.addExpenses.length; i++) {
     arr.push(`${appData.addExpenses[i].trim().slice(0, 1).toUpperCase() + appData.addExpenses[i].trim().slice(1)}`);
 }
 console.log(arr.join(', '));
+
+const calcButton = document.getElementById('#start');
+
+const plusButtonFirst = document.getElementsByTagName('button')[0];
+const plusButtonSecond = document.getElementsByTagName('button')[1];
+
+const depositCheckBox = document.querySelector('#deposit-check');
+const additionalIncome = document.querySelectorAll('.additional_income-item');
+
+const budgetMonthValue = document.getElementsByClassName('budget_month-value');
+const budgetDayValue = document.getElementsByClassName('budget_day-value');
+const expensesMonthValue = document.getElementsByClassName('expenses_month-value');
+const additionalIncomeValue = document.getElementsByClassName('additional_income-value');
+const additionalExpensesValue = document.getElementsByClassName('additional_expenses-value');
+const incomePeriodValue = document.getElementsByClassName('income_period-value');
+const targetMonthValue = document.getElementsByClassName('target_month-value');
+
+let salaryElement = document.querySelector('.salary');
+let incomeElement = document.querySelector('.income');
+let additionalIncomeElement = document.querySelector('.additional_income');
+let expensesElement = document.querySelector('.expenses');
+let additionalExpensesElement = document.querySelector('.additional_expenses');
+let depositElement = document.querySelector('.deposit');
+let targetElement = document.querySelector('.target');
+let periodElement = document.querySelector('.period');
