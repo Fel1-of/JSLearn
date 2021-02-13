@@ -6,7 +6,10 @@ let todoControl = document.querySelector('.todo-control'),
     todoCompleted = document.querySelector('.todo-completed');
 
 let todoData = [''];
-localStorage.setItem('todoData', JSON.stringify(todoData));
+if(!localStorage.getItem('todoData')){
+    localStorage.setItem('todoData', JSON.stringify(todoData));
+}
+
 const render = function () {
     todoList.textContent = '';
     todoCompleted.textContent = '';
