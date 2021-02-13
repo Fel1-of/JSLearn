@@ -1,45 +1,48 @@
 'use strict';
 
 let todoControl = document.querySelector('.todo-control'),
-    headerInput = document.querySelector('.header-input'),
+    headerInput = document.querySelectorAll('.header-input'),
     todoList = document.querySelector('.todo-list'),
     todoCompleted = document.querySelector('.todo-completed');
 
-let todoData = [];
-
+let todoData = [''];
+localStorage.setItem('todoData', JSON.stringify(todoData));
 const render = function () {
     todoList.textContent = '';
     todoCompleted.textContent = '';
+    todoData=JSON.parse(localStorage.getItem('todoData'));
+    if(todoData.length>0){
+        for (let item = 1; item < todoData.length; item++) {
+            let dataItem = todoData[item];
 
-    for (let item = 0; item < localStorage.length; item++) {
-        let dataItem = JSON.parse(localStorage.getItem(localStorage.key(item)))
+            let li = document.createElement('li');
+            if (dataItem.value.trim() !== '') {
+                li.classList.add('todo-item');
+                li.innerHTML = `<span class="text-todo">${dataItem.value}</span>
+                    <div class="todo-buttons">
+                    <button class="todo-remove"></button>
+                    <button class="todo-complete"></button>
+                    </div>`;
 
-        let li = document.createElement('li');
-        if (dataItem.value.trim() !== '') {
-            li.classList.add('todo-item');
-            li.innerHTML = `<span class="text-todo">${dataItem.value}</span>` +
-                '<div class="todo-buttons">' +
-                '<button class="todo-remove"></button>' +
-                '<button class="todo-complete"></button>' +
-                '</div>';
+                if (dataItem.completed) {
+                    todoCompleted.append(li);
+                } else {
+                    todoList.append(li);
+                }
 
-            if (dataItem.completed) {
-                todoCompleted.append(li)
-            } else {
-                todoList.append(li);
-            };
-
-            const todoComplete = li.querySelector('.todo-complete');
-            todoComplete.addEventListener('click', function () {
-                dataItem.completed = !dataItem.completed;
-                localStorage.setItem(localStorage.key(item), JSON.stringify(dataItem));
-                render();
-            });
-            const todoRemove = li.querySelector('.todo-remove');
-            todoRemove.addEventListener('click', function () {
-                localStorage.removeItem(localStorage.key(item));
-                render();
-            });
+                const todoComplete = li.querySelector('.todo-complete');
+                todoComplete.addEventListener('click', function() {
+                    dataItem.completed = !dataItem.completed;
+                    localStorage.setItem('todoData', JSON.stringify(todoData));
+                    render();
+                });
+                const todoRemove = li.querySelector('.todo-remove');
+                todoRemove.addEventListener('click', function() {
+                    todoData.splice(item, 1);
+                    localStorage.setItem('todoData', JSON.stringify(todoData));
+                    render();
+                });
+            }
         }
     }
 };
@@ -51,12 +54,11 @@ todoControl.addEventListener('submit', function (event) {
     const newTodo = {
         value: headerInput.value,
         completed: false,
-    }
-
-    localStorage.setItem(headerInput.value, JSON.stringify(newTodo));
+    };
+    todoData.push(newTodo);
     headerInput.value = '';
-
+    localStorage.setItem('todoData', JSON.stringify(todoData));
     render();
-})
+});
 
 render();
