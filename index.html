@@ -1,31 +1,27 @@
-<!doctype html>
-<html lang="ru">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-	<link rel="shortcut icon" href="#">
-	<meta charset="UTF-8">
-	<meta name="viewport"
-				content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title>ToDo</title>
-
-	<link rel="stylesheet" type="text/css" href="css/normalize.css">
-	<link rel="stylesheet" type="text/css" href="css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Document</title>
 </head>
 <body>
-
-<header class="header">
-	<form class="todo-control">
-		<label><input class="header-input" type="text" placeholder="Какие планы?"></label>
-		<button class="header-button" id="add"></button>
-	</form>
-</header>
-
-<div class="todo-container">       
-	<ul class="todo todo-list" id="todo">
-	</ul>
-	<ul class="todo todo-completed" id="completed">
-	</ul>
-</div>
+    <div class="content">
+        <div class="user">
+            <div class="user__title">
+                <h1>Привет <span class="user__name">Аноним</span></h1>
+            </div>
+            <div class="user__buttons">
+                <button class="reg-btn">Зарегистрировать пользователя</button>
+                <button class="auth-btn">Авторизироваться</button>
+            </div>
+            <div class="user__users">
+                <ul class="user__list">
+                </ul>
+            </div>
+        </div>
+    </div>
 
 <script src="script.js"></script>
 </body>

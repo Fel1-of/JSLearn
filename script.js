@@ -1,67 +1,119 @@
 'use strict';
+let userName = document.querySelector('.user__name'),
+    regButton = document.querySelector('.reg-btn'),
+    authButton = document.querySelector('.auth-btn'),
+    userList = document.querySelector('.user__list');
 
-let todoControl = document.querySelector('.todo-control'),
-    headerInput = document.querySelectorAll('.header-input'),
-    todoList = document.querySelector('.todo-list'),
-    todoCompleted = document.querySelector('.todo-completed');
-
-let todoData = [''];
-if(!localStorage.getItem('todoData')){
-    localStorage.setItem('todoData', JSON.stringify(todoData));
-}
+let yearMonth = ["Января", "Февраля", "Марта", "Апреля", "Мая", "Июня", "Июля", "Августа",
+    "Сентября", "Октября", "Ноября", "Декабря"
+];
+let userArray = [];
 
 const render = function () {
-    todoList.textContent = '';
-    todoCompleted.textContent = '';
-    todoData=JSON.parse(localStorage.getItem('todoData'));
-    if(todoData.length>0){
-        for (let item = 1; item < todoData.length; item++) {
-            let dataItem = todoData[item];
+    userList.textContent = '';
+    userArray = [];
 
-            let li = document.createElement('li');
-            if (dataItem.value.trim() !== '') {
-                li.classList.add('todo-item');
-                li.innerHTML = `<span class="text-todo">${dataItem.value}</span>
-                    <div class="todo-buttons">
-                    <button class="todo-remove"></button>
-                    <button class="todo-complete"></button>
-                    </div>`;
+    let storageUsers = JSON.parse(localStorage.getItem('Users'));
 
-                if (dataItem.completed) {
-                    todoCompleted.append(li);
-                } else {
-                    todoList.append(li);
-                }
+    if (!storageUsers) {
+        return;
+    }
 
-                const todoComplete = li.querySelector('.todo-complete');
-                todoComplete.addEventListener('click', function() {
-                    dataItem.completed = !dataItem.completed;
-                    localStorage.setItem('todoData', JSON.stringify(todoData));
-                    render();
-                });
-                const todoRemove = li.querySelector('.todo-remove');
-                todoRemove.addEventListener('click', function() {
-                    todoData.splice(item, 1);
-                    localStorage.setItem('todoData', JSON.stringify(todoData));
-                    render();
-                });
-            }
-        }
+    for (let i = 0; i < storageUsers.length; i++) {
+        let item = storageUsers[i];
+        userArray[i] = item;
+
+        let li = document.createElement('li');
+        li.classList.add('list__item');
+        li.innerHTML = `Имя: <span>${item.name}, </span>
+        Фамилия: <span>${item.surname}, </span>
+        Зарегистрирован: <span>${item.regDate}</span> 
+        <button class="delete">Удалить пользователя</button>`;
+        userList.append(li);
+
+        const removeBtn = li.querySelector('.delete');
+        removeBtn.addEventListener('click', () => {
+            item.active = false;
+            storageUsers.splice(i, 1);
+            localStorage.setItem('Users', JSON.stringify(storageUsers));
+            render();
+        });
     }
 };
 
-todoControl.addEventListener('submit', function (event) {
-    event.preventDefault();
-    headerInput = document.querySelector('.header-input');
+regButton.addEventListener("click", () => {
+    let userName,
+        login,
+        password,
+        user;
 
-    const newTodo = {
-        value: headerInput.value,
-        completed: false,
-    };
-    todoData.push(newTodo);
-    headerInput.value = '';
-    localStorage.setItem('todoData', JSON.stringify(todoData));
+    do {
+        userName = prompt('Введите Ваше имя и фамилию:').split(' ');
+        if (userName.length !== 2) {
+            alert('Ошибка! Введите корректное имя!');
+        }
+    } while (userName.length !== 2);
+
+    do {
+        login = prompt('Введите Ваш логин:');
+        if (login.includes(' ')) {
+            alert('В логине не должно быть проблеов');
+        };
+    } while (login.includes(' '));
+
+    do {
+        password = prompt('Введите Ваш пароль:');
+        if (password.includes(' ')) {
+            alert('В пароле не должно быть проблеов');
+        };
+    } while (password.includes(' '));
+
+    let userRegDate = new Date();
+    let parseTime = userRegDate.toLocaleString('ru').split(', ');
+    let date = parseTime[0].split('.');
+    let time = parseTime[1];
+    let fullDate = (date[1] + ' ' + yearMonth[userRegDate.getMonth()] + ' ' + date[2] + 'г., ' + time);
+
+
+    user = {
+        name: userName[0],
+        surname: userName[1],
+        login: login,
+        password: password,
+        regDate: fullDate,
+        active: true
+    }
+    userArray.push(user);
+    console.log('User: ', user);
+    localStorage.setItem('Users', JSON.stringify(userArray));
+
     render();
+})
+
+authButton.addEventListener('click', () => {
+    let userLog = prompt('Введите ваш Логин:');
+    let userPassw = prompt('Введите ваш пароль');
+    let userFlag = false;
+
+    let storageUsers = JSON.parse(localStorage.getItem('Users'));
+
+    if (!storageUsers || storageUsers.length === 0) {
+        alert('Пользователь не найден!');
+        return;
+    }
+
+    storageUsers.forEach((item) => {
+
+        if (item.login == userLog && item.password == userPassw) {
+            userName.textContent = item.name;
+            userFlag = true;
+            return;
+        }
+        
+    });
+    if (userFlag!==true) {
+        alert('Пользователь не найден!');
+    }
 });
 
 render();
