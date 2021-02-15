@@ -238,6 +238,7 @@ const appData = {
 
             if (itemIncome !== '' && cashIncome !== '') {
                 this.income[itemIncome] = +cashIncome;
+                this.budget+=+cashIncome;
             }
         });
     },
