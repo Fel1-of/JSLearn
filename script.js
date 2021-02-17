@@ -136,6 +136,7 @@ const appData = function(){
         this.budgetDay = 0;
         this.budgetMonth = 0;
         this.expensesMonth = 0;
+        depositCheckBox.checked = false;
     },
 
     appData.prototype.disableFields = function(){
