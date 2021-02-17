@@ -34,15 +34,16 @@ const calcStartButton = document.getElementById('start'),
 
     targetElement = document.querySelector('.target-amount'),
     periodSelect = document.querySelector('.period-select'),
+    salaryElement = document.querySelector('.salary-amount'),
+    placeholderSum = document.querySelectorAll('[placeholder="Сумма"]'),
+    placeholderName = document.querySelectorAll('[placeholder="Наименование"]'),
     periodAmount = document.querySelector('.period-amount');
 
     
 
 let incomeItems = document.querySelectorAll('.income-items'),
-    expensesItems = document.querySelectorAll('.expenses-items'),
-    salaryElement = document.querySelector('.salary-amount'),
-    placeholderSum = document.querySelectorAll('[placeholder="Сумма"]'),
-    placeholderName = document.querySelectorAll('[placeholder="Наименование"]');
+    expensesItems = document.querySelectorAll('.expenses-items');
+    
 
 calcStartButton.disabled = true;
 
@@ -93,12 +94,12 @@ class appData{
         plusButtonExpenses.style.display = "block";
         plusButtonIncome.style.display = "block";
 
-        let income = document.querySelectorAll('.income-items');
+        const income = document.querySelectorAll('.income-items');
         income.forEach((item, index) => {
             if (index !== 0) item.remove();
         });
 
-        let expenses = document.querySelectorAll('.expenses-items');
+        const expenses = document.querySelectorAll('.expenses-items');
         expenses.forEach((item, index) => {
             if (index !== 0) item.remove();
         });
@@ -144,7 +145,7 @@ class appData{
     disableFields(){
         calcStartButton.style.display="none";
         calcClearButton.style.display="block";
-        let main = document.querySelectorAll('.data input');
+        const main = document.querySelectorAll('.data input');
         main.forEach((item) => {
             if (item.type == "range") {
                 item.disabled = false;
@@ -157,7 +158,7 @@ class appData{
     }
 
     showResult(){
-        let _this = this;
+        const _this = this;
         budgetMonthValue.value = this.budgetMonth;
         budgetDayValue.value = Math.ceil(this.budgetDay);
         expensesMonthValue.value = this.expensesMonth;
@@ -196,7 +197,7 @@ class appData{
 
 
     getAddExpInc(){
-        let addExpenses = additionalExpensesElement.value.split(',');
+        const addExpenses = additionalExpensesElement.value.split(',');
 
         const getadd = (item, val, type) => {
             item.forEach((i) => {
@@ -242,7 +243,7 @@ class appData{
     getExpensesMonth() {
         let sum = 0;
         
-        for (let key in this.expenses) {
+        for (const key in this.expenses) {
             sum += this.expenses[key];
         }
     
@@ -296,8 +297,8 @@ class appData{
         return this.budgetMonth * periodSelect.value;
     }
     validation(){
-        placeholderSum = document.querySelectorAll('[placeholder="Сумма"]');
-        placeholderName = document.querySelectorAll('[placeholder="Наименование"]');
+        const placeholderSum = document.querySelectorAll('[placeholder="Сумма"]');
+        const placeholderName = document.querySelectorAll('[placeholder="Наименование"]');
 
         placeholderSum.forEach(function (elem) {
             elem.addEventListener('input', () => elem.value = elem.value.replace(/[^\d]/g, ''));
