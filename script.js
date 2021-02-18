@@ -94,13 +94,11 @@ class appData{
         plusButtonExpenses.style.display = "block";
         plusButtonIncome.style.display = "block";
 
-        const income = document.querySelectorAll('.income-items');
-        income.forEach((item, index) => {
+        incomeItems.forEach((item, index) => {
             if (index !== 0) item.remove();
         });
 
-        const expenses = document.querySelectorAll('.expenses-items');
-        expenses.forEach((item, index) => {
+        expensesItems.forEach((item, index) => {
             if (index !== 0) item.remove();
         });
 
@@ -217,8 +215,6 @@ class appData{
     
 
     getExpInc(){
-        incomeItems = document.querySelectorAll('.income-items');
-        expensesItems = document.querySelectorAll('.expenses-items');
         const count = item =>{
             const startStr = item.className.split('-')[0];
             const itemTitle = item.querySelector(`.${startStr}-title`).value;
