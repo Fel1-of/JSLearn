@@ -47,6 +47,36 @@ let incomeItems = document.querySelectorAll('.income-items'),
     
 
 calcStartButton.disabled = true;
+class CookieManager {
+    getCookie(cname) {
+      var name = cname + "=";
+      var decodedCookie = decodeURIComponent(document.cookie);
+      var ca = decodedCookie.split(';');
+      for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+          return c.substring(name.length, c.length);
+        }
+      }
+      return "";
+    }
+  
+    setCookie(cname, cvalue, exdays) {
+      var d = new Date();
+      d.setTime(d.getTime() + (exdays*24*60*60*1000));
+      var expires = "expires="+ d.toUTCString();
+      document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+  
+    deleteCookie(name) {
+        document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    }
+  
+  }
+
 
 class appData{
     constructor() {
@@ -63,6 +93,8 @@ class appData{
         this.period = 0;
         this.income = {};
         this.incomeMonth = 0;
+        this.cookieManager = new CookieManager();
+        this.storageNames = new Set (['budgetMonth', 'budgetDay', 'expenses', 'addIncome', 'addExpenses', 'incomeMonth', 'targetMonth', 'isLoad']);
     }
     
     
@@ -82,9 +114,19 @@ class appData{
         this.getBudget();
         this.showResult();
         this.disableFields();
+        this.saveData();
+        this.lockInputs();
     }
-
+    lockInputs() {
+        calcStartButton.style.display = 'none';
+        calcClearButton.style.display = 'block';
+        let inputs = document.querySelectorAll('input[type=text]');
+        inputs.forEach((item) => {
+          item.disabled = true;
+        });
+      }
     reset(){
+        this.clearData();
         salaryElement.value = '';
         additionalExpensesValue.value = '';
         targetElement.value = '';
@@ -346,6 +388,96 @@ class appData{
             depositBank.removeEventListener('change', this.changePercent);
         }
     }
+
+    checkMemory() {
+        let loaded = true;
+    
+        for (let item of this.storageNames) {
+          const cookieValue = this.cookieManager.getCookie(item);
+          if (cookieValue === undefined) {
+            loaded = false;
+            break;
+          }
+    
+          if (localStorage[item] !== undefined) {
+            if (localStorage[item] !== cookieValue) {
+              loaded = false;
+              break;
+            }
+    
+            if (item === 'addExpenses' || item === 'addIncome') {
+              for (let memoryItem of JSON.parse(localStorage[item])) {
+                this[item].push(memoryItem);
+              }
+            } else if (item === 'expenses') {
+              this[item] = JSON.parse(localStorage[item]);
+            } else {
+                this[item] = +localStorage[item];
+            }
+          } else {
+            loaded = false;
+            break;
+          }
+        }
+    
+        if (loaded) {
+          this.lockInputs();
+          this.showResult();
+        } else {
+          this.clearData();
+          this.clearCookies();
+        }
+      }
+    
+      clearData() {
+        this.income = {};
+        this.addIncome = [];
+        this.expenses = {};
+        this.addExpenses = [];
+        this.deposit = false;
+        this.percentDeposit = 0;
+        this.moneyDeposit = 0;
+        this.incomeMonth = 0;
+        this.budget = 0;
+        this.budgetDay = 0;
+        this.budgetMonth = 0;
+        this.expensesMonth = 0;
+        this.targetMonth = 0;
+        this.clearLocalStorage();
+      }
+    
+      clearLocalStorage() {
+        for (let item of this.storageNames) {
+          if (localStorage[item] !== undefined) {
+            localStorage.removeItem(item);
+          }
+        }
+      }
+    
+      clearCookies() {
+        for (let item of this.storageNames) {
+          this.cookieManager.deleteCookie(item);
+        }
+      }
+    
+      saveData() {
+        for (let item of this.storageNames) {
+          let value;
+    
+          if (item === 'addExpenses' || item === 'addIncome' || item === 'expenses') {
+            value = JSON.stringify(this[item]);
+          } else if (item === 'isLoad') {
+            value = true;
+          } else {
+            value = this[item];
+          }
+    
+          localStorage[item] = value;
+    
+          this.cookieManager.setCookie(item, value, 1000);
+        }
+      }
+    
     initApp() {
         const _this = this;
         this.validation();
@@ -388,7 +520,7 @@ class appData{
             depositCheck.addEventListener('change', this.depositHandler.bind(this));
         }
         
-
+        
         calcStartButton.disabled = true;
         salaryElement.addEventListener('input', function () {
             if (salaryElement.value !== '') {
@@ -403,3 +535,4 @@ class appData{
 const appdata = new appData();
     
 appdata.initApp();
+appdata.checkMemory();
