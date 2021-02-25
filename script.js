@@ -107,7 +107,19 @@ window.addEventListener('DOMContentLoaded', () =>{
 
 toggleMenu();
 
-
+let bool; 
+if(screen.width>768){
+    bool = true;
+} else{
+    bool = false;
+}
+window.addEventListener(`resize`, () => {
+    if(screen.width>768){
+        bool = true;
+    } else{
+        bool = false;
+    }
+  });
 {//Popup
 const togglePopUp = () => {
     const popup = document.querySelector('.popup'),
@@ -119,7 +131,7 @@ const togglePopUp = () => {
     
     popupBtn.forEach( elem => elem.addEventListener('click', () => {
         popup.style.display = 'block';   
-        if (screen.width > 768) {
+        if (bool) {
             animationPopUp();
         }
     }));
