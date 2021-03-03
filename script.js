@@ -222,110 +222,161 @@ document.addEventListener('DOMContentLoaded', function() {
     tabs();
     }
 
-    const slider = () => {
-        const slide = document.querySelectorAll('.portfolio-item'),
-            dotContainer = document.querySelector('.portfolio-dots'),
-            slider = document.querySelector('.portfolio-content');
+    { //Slider
 
-        let currentSlide = 0,
-            interval;
+		const slider = () => {
 
-        slide.forEach((i) => {
-        let li = document.createElement('li');
+			const slide = document.querySelectorAll('.portfolio-item'),
+				slider = document.querySelector('.portfolio-content'),
+				dotsUl = document.querySelector('.portfolio-dots');
 
-        li.classList.add('dot');
+			const addDots = () => {
+				for (let i = 0; i < slide.length; i++) {
+					const dotElement = document.createElement('li');
+					dotsUl.appendChild(dotElement);
+					dotElement.classList.add('dot');
+					if (i === 0) dotElement.classList.add('dot-active');
+				}
+			};
 
-        if (i === 0) {
-            li.classList.add('dot-active');
-        }
+			addDots();
 
-        dotContainer.appendChild(li);
-        });
+			const dot = document.querySelectorAll('.dot');
+			let currentSlide = 0,
+				interval;
 
-        const dot = document.querySelectorAll('.dot');
+			const prevSlide = (elem, index, strClass) => {
+				elem[index].classList.remove(strClass);
+			};
 
-        const prevSlide = (elem, index, strClass) => {
-        elem[index].classList.remove(strClass);
-        };
+			const nextSlide = (elem, index, strClass) => {
+				elem[index].classList.add(strClass);
+			};
 
-        const nextSlide = (elem, index, strClass) => {
-        elem[index].classList.add(strClass);
-        };
+			const autoPlaySlide = () => {
 
-        const autoPlaySlide = () => {
-        prevSlide(slide, currentSlide, 'portfolio-item-active');
-        prevSlide(dot, currentSlide, 'dot-active');
-        currentSlide++;
+				prevSlide(slide, currentSlide, 'portfolio-item-active');
+				prevSlide(dot, currentSlide, 'dot-active');
+				currentSlide++;
+				if (currentSlide >= slide.length) {
+					currentSlide = 0;
+				}
+				nextSlide(slide, currentSlide, 'portfolio-item-active');
+				nextSlide(dot, currentSlide, 'dot-active');
+			};
 
-        if (currentSlide >= slide.length) {
-            currentSlide = 0;
-        }
+			const startSlide = (time = 3000) => {
+				interval = setInterval(autoPlaySlide, time);
+			};
 
-        nextSlide(slide, currentSlide, 'portfolio-item-active');
-        nextSlide(dot, currentSlide, 'dot-active');
-        };
+			const stopSlide = () => {
+				clearInterval(interval);
+			};
 
-        const startSlide = (time = 3000) => {
-        interval = setInterval(autoPlaySlide, time);
-        };
+			slider.addEventListener('click', event => {
+				event.preventDefault();
 
-        const stopSlide = () => {
-        clearInterval(interval);
-        };
+				const target = event.target;
 
-        slider.addEventListener('click', (event) => {
-        event.preventDefault();
+				if (!target.matches('.portfolio-btn, .dot')) {
+					return;
+				}
 
-        let target = event.target;
+				prevSlide(slide, currentSlide, 'portfolio-item-active');
+				prevSlide(dot, currentSlide, 'dot-active');
 
-        if (!target.matches('.portfolio-btn, .dot')) {
-            return;
-        }
+				if (target.matches('#arrow-right')) {
+					currentSlide++;
+				} else if (target.matches('#arrow-left')) {
+					currentSlide--;
+				} else if (target.matches('.dot')) {
+					dot.forEach((elem, index) => {
+						if (elem === target) {
+							currentSlide = index;
+						}
+					});
+				}
 
-        prevSlide(slide, currentSlide, 'portfolio-item-active');
-        prevSlide(dot, currentSlide, 'dot-active');
+				if (currentSlide >= slide.length) {
+					currentSlide = 0;
+				}
 
-        if (target.matches('#arrow-right')) {
-            currentSlide++;
-        } else if (target.matches('#arrow-left')) {
-            currentSlide--;
-        } else if (target.matches('.dot')) {
-            dot.forEach((item, i) => {
-            if (item === target) {
-                currentSlide = i;
-            }
+				if (currentSlide < 0) {
+					currentSlide = slide.length - 1;
+				}
+
+				nextSlide(slide, currentSlide, 'portfolio-item-active');
+				nextSlide(dot, currentSlide, 'dot-active');
+
+			});
+
+			slider.addEventListener('mouseover', event => {
+				if (event.target.matches('.portfolio-btn') ||
+                event.target.matches('.dot')) {
+					stopSlide();
+				}
+			});
+
+			slider.addEventListener('mouseout', event => {
+				if (event.target.matches('.portfolio-btn') ||
+                event.target.matches('.dot')) {
+					startSlide();
+				}
+			});
+
+
+			startSlide(1500);
+
+		};
+
+		slider();
+	}
+
+
+    {//change photo
+		const commandPhoto = document.querySelectorAll('#command .command__photo');
+
+		commandPhoto.forEach(item => {
+			const photoSrc = item.getAttribute('src');
+			const photoData = item.dataset.img;
+			item.addEventListener('mouseenter', event => event.target.src = photoData);
+			item.addEventListener('mouseleave', event => event.target.src = photoSrc);
+		});
+	}
+
+    //valid
+    {   const validation = () => {
+            const form = document.querySelectorAll('input');
+            form.forEach((element)=>{
+                if(element.matches('.form-email')){
+                    element.addEventListener('blur', () => {{//replace(/[а-яА-ЯёЁ]|^[ -]*|( |-)(?=\1)|[ -]*$/g, '')
+                        element.value = element.value.match(/\w+@\w+\.\w{2,3}/g);
+                    
+                    }});
+                }
+                else if(element.matches('.form-phone')){
+                    element.addEventListener('blur', () => {{
+                        element.value = element.value.match(/\+?[78]([-()]*\d){10}/g);
+                    
+                    }});
+                }
+                else if(element.matches('.top-form') || element.matches('.form-name') || element.matches('.mess')){
+                    element.addEventListener('blur', () => {{
+                        element.value = element.value.replace(/[^а-яА-ЯёЁ\s\-]|^[ -]*|( |-)(?=\1)|[ -]*$/g, '');
+                        element.value = element.value.slice(0,1).toUpperCase() + element.value.slice(1, element.value.length);
+                    
+                    }});
+                }
+                else if(element.matches('.calc-item') && !element.matches('.calc-type')){
+                    element.addEventListener('blur', () => {{
+                        element.value = element.value.replace(/\D/g, '');
+                    
+                    }});
+                }
+                
             });
-        }
-
-        if (currentSlide >= slide.length) {
-            currentSlide = 0;
-        } else if (currentSlide < 0) {
-            currentSlide = slide.length - 1;
-        }
-
-        nextSlide(slide, currentSlide, 'portfolio-item-active');
-        nextSlide(dot, currentSlide, 'dot-active');
-        });
-
-        slider.addEventListener('mouseover', (event) => {
-        let target = event.target;
-
-        if (target.matches('.dot') || target.matches('.portfolio-btn')) {
-            stopSlide();
-        }
-        });
-
-        slider.addEventListener('mouseout', (event) => {
-        let target = event.target;
-
-        if (target.matches('.dot') || target.matches('.portfolio-btn')) {
-            startSlide();
-        }
-        });
-
-        startSlide(1500);
-
     };
-
-    slider();
-    });
+        validation();
+    }
+    
+});
