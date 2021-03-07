@@ -462,14 +462,31 @@ document.addEventListener('DOMContentLoaded', function () {
                   successMessage = 'Заявка была отправлена';
         
             const form = document.getElementById(selector);
-
             
+            const buttons = document.querySelectorAll('button[type=submit]');
+            const bNum = selector[4]-1;
+            buttons.forEach(e => e.setAttribute("disabled", "disabled"));
+            document.querySelectorAll('input').forEach(e => e.addEventListener('input', ()=> {
+                let valid = 0;
+                for(let val of new FormData(form).entries()){
+                    if(val[1]==='') {
+                        valid +=1;
+                        }
+                }
+                if(valid){
+                    
+                    buttons[bNum].setAttribute('disabled',  "disabled");
+                } else {
+                    buttons[bNum].removeAttribute('disabled');
+                }
+                
+            }));
             const statusMessage = document.createElement('div');
             statusMessage.style.cssText = 'font-size: 2rem;';
             //statusMessage.textContent = 'Тут будет сообщение';
         
             form.addEventListener('submit', (event) => {
-            if(document.getElementById(`${selector}-email`.value === null || document.getElementById(`${selector}-email`.value === 'E-mail'))) {
+
                      
                 
             event.preventDefault();
@@ -480,7 +497,7 @@ document.addEventListener('DOMContentLoaded', function () {
         
               const formData = new FormData(form);
               let body = {};
-        
+                
               for (let value of formData.entries()) {
                 body[value[0]] = value[1];
               }
@@ -490,16 +507,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 statusMessage.classList.remove('sk-pulse');
                 statusMessage.textContent = successMessage;
                 statusMessage.style.cssText = '';
+                buttons[bNum].setAttribute('disabled', 'disabled');
               }, (error) => {
                 clearInputs(form);
                 console.log(error);
                 statusMessage.classList.remove('sk-pulse');
                 statusMessage.textContent = errorMessage;
                 statusMessage.style.cssText = '';
+                buttons[bNum].setAttribute('disabled', 'disabled');
               });
-            } else {
-                statusMessage.textContent = errorMessage;
-            }
+            
         });
             
             const clearInputs = (form) => {
