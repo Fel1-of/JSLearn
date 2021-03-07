@@ -356,8 +356,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (element.matches('.form-email')) {
                     element.addEventListener('blur', () => {
                         { //replace(/[а-яА-ЯёЁ]|^[ -]*|( |-)(?=\1)|[ -]*$/g, '')
+                            element.classList.add('succses');
                             element.value = element.value.match(/\w+@\w+\.\w{2,3}/g);
-
+                            if(!element.value) { 
+                                element.classList.remove('succses');
+                        }
                         }
                     });
                 } else if (element.matches('.form-phone')) {
@@ -453,18 +456,23 @@ document.addEventListener('DOMContentLoaded', function () {
     } { //send-ajax-form
 
         const sendForm = (selector) => {
+            
             const errorMessage = 'Что-то пошло не так',
                   //loadMessage = 'Загрузка...',
                   successMessage = 'Заявка была отправлена';
         
             const form = document.getElementById(selector);
-        
+
+            
             const statusMessage = document.createElement('div');
             statusMessage.style.cssText = 'font-size: 2rem;';
             //statusMessage.textContent = 'Тут будет сообщение';
         
             form.addEventListener('submit', (event) => {
-              event.preventDefault();
+            if(document.getElementById(`${selector}-email`.value === null || document.getElementById(`${selector}-email`.value === 'E-mail'))) {
+                     
+                
+            event.preventDefault();
               form.appendChild(statusMessage);
               statusMessage.classList.add('sk-pulse');
               statusMessage.style.cssText = 'margin: auto';
@@ -476,7 +484,7 @@ document.addEventListener('DOMContentLoaded', function () {
               for (let value of formData.entries()) {
                 body[value[0]] = value[1];
               }
-        
+              
               postData(body, () => {
                 clearInputs(form);
                 statusMessage.classList.remove('sk-pulse');
@@ -489,8 +497,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 statusMessage.textContent = errorMessage;
                 statusMessage.style.cssText = '';
               });
-            });
-        
+            } else {
+                statusMessage.textContent = errorMessage;
+            }
+        });
+            
             const clearInputs = (form) => {
               const inputs = form.querySelectorAll('input');
         
@@ -501,7 +512,7 @@ document.addEventListener('DOMContentLoaded', function () {
               const request = new XMLHttpRequest();
         
               request.addEventListener('readystatechange', () => {
-        
+
                 if (request.readyState !== 4) {
                   return;
                 }
