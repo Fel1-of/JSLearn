@@ -491,9 +491,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 event.preventDefault();
                 form.appendChild(statusMessage);
+                statusMessage.textContent = '';
                 statusMessage.classList.add('sk-pulse');
                 statusMessage.style.cssText = 'margin: auto';
-                //statusMessage.textContent = loadMessage;
+                
 
                 const formData = new FormData(form);
                 let body = {};
@@ -501,16 +502,24 @@ document.addEventListener('DOMContentLoaded', function () {
                 for (let value of formData.entries()) {
                     body[value[0]] = value[1];
                 }
-
-                postData(body)
-                .then(()=>{
+                fetch('./server.php', {
+                    method: 'POST', 
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                  }).then((response) => {
+                    if (response.status !== 200) {
+                      throw new Error(`Что-то пошло не так, код ошибки - ${response.status}`);
+                    }
                     statusMessage.textContent = successMessage;
-                })
-                .catch((error)=>{
+                    updatePage();
+                  })
+                  .catch((error) => {
                     console.log(error);
                     statusMessage.textContent = errorMessage;
-                })
-                .finally(updatePage);
+                    updatePage();
+                  });
             });
 
             const updatePage = () => {
@@ -518,39 +527,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 statusMessage.classList.remove('sk-pulse');
                 statusMessage.style.cssText = '';
                 buttons[bNum].setAttribute('disabled', 'disabled');
+                setTimeout(() => {
+                    statusMessage.textContent = '';
+                  }, 3000);
+                if(selector === "form3"){
+                    setTimeout(()=>{
+                        document.querySelector('.popup').style.display = 'none';
+                    }, 2000);
+                }
             };
-
-
             const clearInputs = (form) => {
                 const inputs = form.querySelectorAll('input');
 
                 inputs.forEach(item => item.value = '');
             };
-
-            const postData = (body) => {
-                return new Promise((resolve, reject) => {
-                  const request = new XMLHttpRequest();
-          
-                  request.addEventListener('readystatechange', () => {
-            
-                    if (request.readyState !== 4) {
-                      return;
-                    }
-                    if (request.status === 200) {
-                      resolve();            
-                    } else {
-                      reject(request.Status);  
-                    }
-                  });
-            
-                  request.open('POST', './server.php');
-                  request.setRequestHeader('Content-type', 'application/json');
-            
-                  request.send(JSON.stringify(body));
-                });
-          
-              };
-          
             };
 
         sendForm('form1');
