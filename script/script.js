@@ -358,9 +358,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         { //replace(/[а-яА-ЯёЁ]|^[ -]*|( |-)(?=\1)|[ -]*$/g, '')
                             element.classList.add('succses');
                             element.value = element.value.match(/\w+@\w+\.\w{2,3}/g);
-                            if(!element.value) { 
+                            if (!element.value) {
                                 element.classList.remove('succses');
-                        }
+                            }
                         }
                     });
                 } else if (element.matches('.form-phone')) {
@@ -456,104 +456,106 @@ document.addEventListener('DOMContentLoaded', function () {
     } { //send-ajax-form
 
         const sendForm = (selector) => {
-            
+
             const errorMessage = 'Что-то пошло не так',
-                  //loadMessage = 'Загрузка...',
-                  successMessage = 'Заявка была отправлена';
-        
+                //loadMessage = 'Загрузка...',
+                successMessage = 'Заявка была отправлена';
+
             const form = document.getElementById(selector);
-            
+
             const buttons = document.querySelectorAll('button[type=submit]');
-            const bNum = selector[4]-1;
+            const bNum = selector[4] - 1;
             buttons.forEach(e => e.setAttribute("disabled", "disabled"));
-            document.querySelectorAll('input').forEach(e => e.addEventListener('input', ()=> {
+            document.querySelectorAll('input').forEach(e => e.addEventListener('input', () => {
                 let valid = 0;
-                for(let val of new FormData(form).entries()){
-                    if(val[1]==='') {
-                        valid +=1;
-                        }
+                for (let val of new FormData(form).entries()) {
+                    if (val[1] === '') {
+                        valid += 1;
+                    }
                 }
-                if(valid){
-                    
-                    buttons[bNum].setAttribute('disabled',  "disabled");
+                if (valid) {
+
+                    buttons[bNum].setAttribute('disabled', "disabled");
                 } else {
                     buttons[bNum].removeAttribute('disabled');
                 }
-                
+
             }));
             const statusMessage = document.createElement('div');
             statusMessage.style.cssText = 'font-size: 2rem;';
             //statusMessage.textContent = 'Тут будет сообщение';
-        
+
             form.addEventListener('submit', (event) => {
 
-                     
-                
-            event.preventDefault();
-              form.appendChild(statusMessage);
-              statusMessage.classList.add('sk-pulse');
-              statusMessage.style.cssText = 'margin: auto';
-              //statusMessage.textContent = loadMessage;
-        
-              const formData = new FormData(form);
-              let body = {};
-                
-              for (let value of formData.entries()) {
-                body[value[0]] = value[1];
-              }
-              
-              postData(body, () => {
-                clearInputs(form);
-                statusMessage.classList.remove('sk-pulse');
-                statusMessage.textContent = successMessage;
-                statusMessage.style.cssText = '';
-                buttons[bNum].setAttribute('disabled', 'disabled');
-              }, (error) => {
-                clearInputs(form);
-                console.log(error);
-                statusMessage.classList.remove('sk-pulse');
-                statusMessage.textContent = errorMessage;
-                statusMessage.style.cssText = '';
-                buttons[bNum].setAttribute('disabled', 'disabled');
-              });
-            
-        });
-            
-            const clearInputs = (form) => {
-              const inputs = form.querySelectorAll('input');
-        
-              inputs.forEach(item => item.value = '');
-            };
-        
-            const postData = (body, outputData, errorData) => {
-              const request = new XMLHttpRequest();
-        
-              request.addEventListener('readystatechange', () => {
 
-                if (request.readyState !== 4) {
-                  return;
+
+                event.preventDefault();
+                form.appendChild(statusMessage);
+                statusMessage.classList.add('sk-pulse');
+                statusMessage.style.cssText = 'margin: auto';
+                //statusMessage.textContent = loadMessage;
+
+                const formData = new FormData(form);
+                let body = {};
+
+                for (let value of formData.entries()) {
+                    body[value[0]] = value[1];
                 }
-        
-                if (request.status === 200) {
-                  outputData();
-                  
-                } else {
-                  errorData(request.Status);
-        
-                }
-              });
-        
-              request.open('POST', './server.php');
-              request.setRequestHeader('Content-type', 'application/json');
-        
-              request.send(JSON.stringify(body));
+
+                postData(body)
+                .then(()=>{
+                    statusMessage.textContent = successMessage;
+                })
+                .catch((error)=>{
+                    console.log(error);
+                    statusMessage.textContent = errorMessage;
+                })
+                .finally(updatePage);
+            });
+
+            const updatePage = () => {
+                clearInputs(form);
+                statusMessage.classList.remove('sk-pulse');
+                statusMessage.style.cssText = '';
+                buttons[bNum].setAttribute('disabled', 'disabled');
             };
-        
-          };
-        
-          sendForm('form1');
-          sendForm('form2');
-          sendForm('form3');
+
+
+            const clearInputs = (form) => {
+                const inputs = form.querySelectorAll('input');
+
+                inputs.forEach(item => item.value = '');
+            };
+
+            const postData = (body) => {
+                return new Promise((resolve, reject) => {
+                  const request = new XMLHttpRequest();
+          
+                  request.addEventListener('readystatechange', () => {
+            
+                    if (request.readyState !== 4) {
+                      return;
+                    }
+                    if (request.status === 200) {
+                      resolve();            
+                    } else {
+                      reject(request.Status);  
+                    }
+                  });
+            
+                  request.open('POST', './server.php');
+                  request.setRequestHeader('Content-type', 'application/json');
+            
+                  request.send(JSON.stringify(body));
+                });
+          
+              };
+          
+            };
+
+        sendForm('form1');
+        sendForm('form2');
+        sendForm('form3');
     }
 
 });
